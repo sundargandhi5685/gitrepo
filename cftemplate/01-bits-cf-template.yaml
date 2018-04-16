@@ -70,7 +70,6 @@ Resources:
       KeyName: !Ref KeyName
       SecurityGroups:
         - !Ref SSHSecurityGroup
-
       UserData:
         Fn::Base64: |
            #!/bin/bash
@@ -130,7 +129,7 @@ Resources:
     Type: AWS::EC2::EIP
     Condition: CreateDevResources
     Properties:
-      InstanceId: !Ref DevEnvironment  
+      InstanceId: !Ref DevEnvironment
 
   # our EC2 security group
   SSHSecurityGroup:
@@ -146,6 +145,7 @@ Resources:
   # our second EC2 security group
   ProdEnvironmentSecurityGroup:
     Type: AWS::EC2::SecurityGroup
+    Condition: CreateProdResources
     Properties:
       GroupDescription: allow connections from specified CIDR ranges
       SecurityGroupIngress:
@@ -153,10 +153,15 @@ Resources:
         FromPort: 8080
         ToPort: 8080
         CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: 0.0.0.0/0
 
   # our second EC2 security group
   TestEnvironmentSecurityGroup:
     Type: AWS::EC2::SecurityGroup
+    Condition: CreateTestResources
     Properties:
       GroupDescription: allow connections from specified CIDR ranges
       SecurityGroupIngress:
